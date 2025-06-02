@@ -1,90 +1,204 @@
 'use client';
 
-const products = [
-    { id: 1, label: "Product 1", price: 99.99, quantity: 50 },
-    { id: 2, label: "Product 2", price: 149.99, quantity: 30 },
-    { id: 3, label: "Product 3", price: 199.99, quantity: 20 },
-    { id: 4, label: "Product 4", price: 299.99, quantity: 10 },
-];
+import { useEffect, useState } from 'react';
+import { Product } from '@/types/product';
+import DeleteConfirmationModal from '@/components/DeleteConfirmationModal';
+import ProductsTable from '@/components/ProductsTable';
 
 export default function ProductsPage() {
-    const handleDelete = (id: number) => {
-        // TODO: Implement delete functionality
-        console.log('Delete product:', id);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [deleteModal, setDeleteModal] = useState<{
+        isOpen: boolean;
+        productId: string | null;
+        productName: string;
+    }>({
+        isOpen: false,
+        productId: null,
+        productName: ''
+    });
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const fetchProducts = async (search?: string) => {
+        try {
+            setLoading(true);
+            const url = search 
+                ? `/api/products?name=${encodeURIComponent(search)}`
+                : '/api/products';
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Failed to fetch products');
+            const data = await response.json();
+            setProducts(data);
+        } catch (err) {
+            setError('Failed to load products');
+            console.error(err);
+        } finally {
+            setLoading(false);
+        }
     };
 
-    const handleUpdate = (id: number) => {
-        // TODO: Implement update functionality
+    const handleSearch = () => {
+        fetchProducts(searchTerm);
+    };
+
+    const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
+        fetchProducts();
+    };
+
+    const handleDeleteClick = (product: Product) => {
+        setDeleteModal({
+            isOpen: true,
+            productId: product._id,
+            productName: product.label
+        });
+    };
+
+    const handleDeleteConfirm = async () => {
+        if (!deleteModal.productId) return;
+        
+        try {
+            const response = await fetch(`/api/products?id=${deleteModal.productId}`, {
+                method: 'DELETE',
+            });
+            
+            if (!response.ok) throw new Error('Failed to delete product');
+            
+            setProducts(products.filter(product => product._id !== deleteModal.productId));
+            setDeleteModal({ isOpen: false, productId: null, productName: '' });
+        } catch (err) {
+            console.error('Error deleting product:', err);
+            alert('Failed to delete product');
+        }
+    };
+
+    const handleUpdate = async (id: string) => {
+        // TODO: Implement update functionality with a modal or form
         console.log('Update product:', id);
     };
 
+    const handleSaveChanges = async (changes: { productId: string; newQuantity: number }[]) => {
+        try {
+            // Create an array of promises for all the updates
+            const updatePromises = changes.map(({ productId, newQuantity }) =>
+                fetch(`/api/products?id=${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ quantity: newQuantity }),
+                })
+            );
+
+            // Wait for all updates to complete
+            const responses = await Promise.all(updatePromises);
+            
+            // Check if any updates failed
+            const failedUpdates = responses.filter(response => !response.ok);
+            if (failedUpdates.length > 0) {
+                throw new Error(`Failed to update ${failedUpdates.length} products`);
+            }
+
+            // Refresh the products list
+            await fetchProducts(searchTerm);
+        } catch (err) {
+            console.error('Error saving changes:', err);
+            alert('Failed to save some changes');
+        }
+    };
+
+    if (loading) return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+        </div>
+    );
+
+    if (error) return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8 flex items-center justify-center">
+            <div className="text-red-600">{error}</div>
+        </div>
+    );
+
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
-            <div className="max-w-6xl mx-auto">
-                <h1 className="text-3xl font-bold mb-6 text-gray-800 tracking-tight">
-                    Products
-                    <span className="text-indigo-600">.</span>
-                </h1>
-                <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead>
-                                <tr className="bg-indigo-50">
-                                    <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-indigo-900">ID</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-indigo-900">Label</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-indigo-900">Price</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-indigo-900">Quantity</th>
-                                    <th scope="col" className="px-6 py-4 text-left text-sm font-semibold text-indigo-900">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-100">
-                                {products.map((product) => (
-                                    <tr 
-                                        key={product.id} 
-                                        className="transition-colors hover:bg-gray-50/50"
+        <>
+            <DeleteConfirmationModal
+                isOpen={deleteModal.isOpen}
+                onClose={() => setDeleteModal({ isOpen: false, productId: null, productName: '' })}
+                onConfirm={handleDeleteConfirm}
+                productName={deleteModal.productName}
+            />
+
+            <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
+                <div className="max-w-6xl mx-auto">
+                    <div className="flex justify-between items-center mb-6">
+                        <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+                            Products
+                            <span className="text-indigo-600">.</span>
+                        </h1>
+                        <div className="flex items-center gap-2">
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyPress={handleKeyPress}
+                                    placeholder="Search products..."
+                                    className="w-64 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                />
+                                {searchTerm && (
+                                    <button
+                                        onClick={handleClearSearch}
+                                        className="absolute right-24 top-2.5 text-gray-400 hover:text-gray-600"
+                                        title="Clear search"
                                     >
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{product.id}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-800">{product.label}</td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className="text-emerald-600 font-medium">${product.price}</span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
-                                                ${product.quantity > 40 ? 'bg-green-100 text-green-800' :
-                                                product.quantity > 20 ? 'bg-yellow-100 text-yellow-800' :
-                                                'bg-red-100 text-red-800'}`}>
-                                                {product.quantity} in stock
-                                            </span>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap text-sm">
-                                            <div className="flex items-center gap-3">
-                                                <button
-                                                    onClick={() => handleUpdate(product.id)}
-                                                    className="p-1 text-blue-600 hover:text-blue-800 transition-colors"
-                                                    title="Edit product"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                                                    </svg>
-                                                </button>
-                                                <button
-                                                    onClick={() => handleDelete(product.id)}
-                                                    className="p-1 text-red-600 hover:text-red-800 transition-colors"
-                                                    title="Delete product"
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                                        </svg>
+                                    </button>
+                                )}
+                            </div>
+                            <button
+                                onClick={handleSearch}
+                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                            >
+                                <svg
+                                    className="h-5 w-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                                    />
+                                </svg>
+                                Search
+                            </button>
+                        </div>
                     </div>
+                    
+                    <ProductsTable 
+                        products={products}
+                        onUpdate={handleUpdate}
+                        onDelete={handleDeleteClick}
+                        onSaveChanges={handleSaveChanges}
+                    />
                 </div>
             </div>
-        </div>
+        </>
     );
 }
