@@ -11,6 +11,7 @@
 // }
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, BarChart3, Package, Users, Zap, Check, Star, ArrowRight, Menu, X } from 'lucide-react';
+import Link from 'next/link';
 
 export default function ProductManagementLanding() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -69,9 +70,11 @@ export default function ProductManagementLanding() {
             <a href="#features" className="hover:text-green-400 transition-colors">Features</a>
             <a href="#pricing" className="hover:text-green-400 transition-colors">Pricing</a>
             <a href="#testimonials" className="hover:text-green-400 transition-colors">Reviews</a>
+            <Link href="/signIn" className="bg-gradient-to-r from-green-400 to-blue-500 px-6 py-2 rounded-full">
             <button className="bg-gradient-to-r from-green-400 to-blue-500 px-6 py-2 rounded-full hover:shadow-lg hover:scale-105 transition-all duration-300">
               Get Started
             </button>
+            </Link>
           </div>
 
           <button 
