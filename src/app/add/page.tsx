@@ -76,12 +76,12 @@ export default function AddProduct() {
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full mx-auto space-y-8">
           <div>
-            <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            <h2 className="block text-center text-3xl mt-3 font-bold bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
               Add New Product
             </h2>
           </div>
           <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-            <div className="rounded-md shadow-sm space-y-4">
+            <div className="space-y-4">
               <div>
                 <label htmlFor="label" className="block text-sm font-medium text-gray-700">
                   Product Name
@@ -91,7 +91,7 @@ export default function AddProduct() {
                   name="label"
                   type="text"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 block text-black w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Enter product name"
                   value={formData.label}
                   onChange={(e) => setFormData({...formData, label: e.target.value})}
@@ -107,7 +107,7 @@ export default function AddProduct() {
                   type="number"
                   step="0.01"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Enter price"
                   value={formData.price}
                   onChange={(e) => setFormData({...formData, price: e.target.value})}
@@ -122,7 +122,7 @@ export default function AddProduct() {
                   name="quantity"
                   type="number"
                   required
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  className="mt-1 text-black block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   placeholder="Enter quantity"
                   value={formData.quantity}
                   onChange={(e) => setFormData({...formData, quantity: e.target.value})}
@@ -134,7 +134,7 @@ export default function AddProduct() {
               <button
                 type="submit"
                 disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-purple-900 hover:bg-purple-500 focus:outline-none focus:ring-2 focus:ring-offset-2 transition-colors focus:ring-indigo-500 disabled:bg-indigo-400"
               >
                 {loading ? 'Adding...' : 'Add Product'}
               </button>

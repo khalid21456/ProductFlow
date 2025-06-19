@@ -23,7 +23,6 @@ export default function ProductsTable({
     const [pendingChanges, setPendingChanges] = useState<QuantityChange[]>([]);
     const [isSaving, setIsSaving] = useState(false);
 
-    // Reset pending changes when products change from parent
     useEffect(() => {
         setPendingChanges([]);
     }, [products]);
@@ -145,7 +144,7 @@ export default function ProductsTable({
                                                     <path fillRule="evenodd" d="M3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                                                 </svg>
                                             </button>
-                                            <span className={`w-12 text-center font-medium ${hasChange ? 'text-blue-600' : ''}`}>
+                                            <span className={`w-12 text-center text-black font-medium ${hasChange ? 'text-blue-600' : ''}`}>
                                                 {currentQuantity}
                                             </span>
                                             <button

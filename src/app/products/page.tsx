@@ -142,7 +142,7 @@ export default function ProductsPage() {
             <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">
                 <div className="max-w-6xl mx-auto">
                     <div className="flex justify-between items-center mb-6">
-                        <h1 className="text-3xl font-bold text-gray-800 tracking-tight">
+                        <h1 className="text-3xl font-bold text-purple-900 tracking-tight">
                             Products
                             <span className="text-indigo-600">.</span>
                         </h1>
@@ -153,8 +153,8 @@ export default function ProductsPage() {
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
                                     onKeyPress={handleKeyPress}
-                                    placeholder="Search products..."
-                                    className="w-64 px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                    // placeholder="Search products..."
+                                    className="w-64 px-4 py-2 text-black rounded-lg border border-gray-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                                 />
                                 {searchTerm && (
                                     <button
@@ -170,7 +170,7 @@ export default function ProductsPage() {
                             </div>
                             <button
                                 onClick={handleSearch}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors flex items-center gap-2"
+                                className="px-4 py-2 bg-purple-900 text-white rounded-lg hover:bg-purple-500 transition-colors flex items-center gap-2"
                             >
                                 <svg
                                     className="h-5 w-5"

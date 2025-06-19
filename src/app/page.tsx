@@ -1,14 +1,5 @@
 "use client";
 
-// import Image from "next/image";
-
-// export default function Home() {
-//   return (
-//     <div >
-//         Hi there I'm using nextjs with tailwindcss with the help of cursor
-//     </div>
-//   );
-// }
 import React, { useState, useEffect } from 'react';
 import { ChevronRight, BarChart3, Package, Users, Zap, Check, Star, ArrowRight, Menu, X } from 'lucide-react';
 import Link from 'next/link';
