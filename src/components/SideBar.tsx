@@ -12,8 +12,12 @@ import {
   Calendar,
   ChevronLeft,
   ChevronRight,
-  LogOut
+  LogOut,
+  PackageSearch,
+  Bot
 } from 'lucide-react';
+import Link from 'next/link';
+import { link } from 'fs';
 
 
 
@@ -21,13 +25,13 @@ const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { index:'1', icon: Home, label: 'Dashboard', active: true },
-    { index:'2', icon: BarChart3, label: 'Analytics' },
-    { index:'3', icon: FileText, label: 'Projects' },
-    { index:'4', icon: MessageSquare, label: 'Messages', badge: '3' },
-    { index:'5', icon: Calendar, label: 'Calendar' },
-    { index:'6', icon: Bell, label: 'Notifications', badge: '12' },
-    { index:'7', icon: Settings, label: 'Settings' },
+    { index:'1', icon: Home, label: 'Dashboard', active: true ,link:"/account"},
+    { index:'2', icon: BarChart3, label: 'Analytics' ,link:"/account/analytics"},
+    { index:'3', icon: PackageSearch, label: 'Products' ,link:"/account/products"},
+    { index:'4', icon: Bot, label: 'Recommendations', badge: '3' ,link:"#"},
+    { index:'5', icon: Calendar, label: 'Calendar' ,link:"#"},
+    { index:'6', icon: Bell, label: 'Notifications', badge: '12',link:"#" },
+    { index:'7', icon: Settings, label: 'Settings' ,link:"#"},
   ];
 
   const [menuItemsState,setMenuItems] = useState(menuItems);
@@ -88,8 +92,8 @@ const Sidebar = () => {
               const Icon = item.icon;
               return (
                 <li key={item.index} id={item.index.toString()} onClick={handleClick}>
-                  <a
-                    href="#"
+                   <Link href={item.link || '#'}>
+                  <div
                     className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 group ${
                       item.active
                         ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
@@ -116,7 +120,8 @@ const Sidebar = () => {
                         )}
                       </>
                     )}
-                  </a>
+                  </div>
+                  </Link> 
                 </li>
               );
             })}
