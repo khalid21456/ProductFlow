@@ -52,7 +52,9 @@ export default function ProfileLayout({
 
           </div> */}
           <SideBar/>
-          <div className="w-full h-full">{children}</div>
+            <div className="w-full h-screen overflow-y-auto">
+            {children}
+            </div>
         </div>
       </div>
     </>

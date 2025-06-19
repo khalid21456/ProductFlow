@@ -1,58 +1,86 @@
-
 "use client";
-import React, { useState } from 'react';
-import { 
-  Home, 
-  User, 
-  Settings, 
-  Bell, 
-  BarChart3, 
-  FileText, 
-  MessageSquare, 
+import React, { useState } from "react";
+import {
+  Home,
+  User,
+  Settings,
+  Bell,
+  BarChart3,
+  FileText,
+  MessageSquare,
   Calendar,
   ChevronLeft,
   ChevronRight,
   LogOut,
   PackageSearch,
-  Bot
-} from 'lucide-react';
-import Link from 'next/link';
-import { link } from 'fs';
-
-
+  Bot,
+} from "lucide-react";
+import Link from "next/link";
 
 const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
-    { index:'1', icon: Home, label: 'Dashboard', active: true ,link:"/account"},
-    { index:'2', icon: BarChart3, label: 'Analytics' ,link:"/account/analytics"},
-    { index:'3', icon: PackageSearch, label: 'Products' ,link:"/account/products"},
-    { index:'4', icon: Bot, label: 'Recommendations', badge: '3' ,link:"#"},
-    { index:'5', icon: Calendar, label: 'Calendar' ,link:"#"},
-    { index:'6', icon: Bell, label: 'Notifications', badge: '12',link:"#" },
-    { index:'7', icon: Settings, label: 'Settings' ,link:"#"},
+    {
+      index: "1",
+      icon: Home,
+      label: "Dashboard",
+      active: true,
+      link: "/account",
+    },
+    {
+      index: "2",
+      icon: BarChart3,
+      label: "Analytics",
+      link: "/account/analytics",
+    },
+    {
+      index: "3",
+      icon: PackageSearch,
+      label: "Products",
+      link: "/account/products",
+    },
+    {
+      index: "4",
+      icon: Bot,
+      label: "Recommendations",
+      badge: "3",
+      link: "/account/recommendations",
+    },
+    { index: "5", icon: Calendar, label: "Calendar", link: "#" },
+    { index: "6", icon: Bell, label: "Notifications", badge: "12", link: "#" },
+    { index: "7", icon: Settings, label: "Settings", link: "#" },
   ];
 
-  const [menuItemsState,setMenuItems] = useState(menuItems);
+  const [menuItemsState, setMenuItems] = useState(menuItems);
 
   const handleClick = (e: React.MouseEvent<HTMLLIElement>) => {
     const target = e.currentTarget;
-    const currentIndex = target.getAttribute('id');
+    const currentIndex = target.getAttribute("id");
     console.log("Clicked item index:", currentIndex);
-    
+
     menuItemsState.forEach((item) => {
-        item.active = item.index === currentIndex;
+      item.active = item.index === currentIndex;
     });
-    
-    setMenuItems([...menuItemsState])
-}
+
+    setMenuItems([...menuItemsState]);
+  };
+
+  const handleOtherSection = (e: React.MouseEvent<HTMLLIElement>) => {
+    menuItemsState.forEach((item) => {
+      item.active = false;
+    });
+    setMenuItems([...menuItemsState]);
+  };
 
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <div className={`${isCollapsed ? 'w-20' : 'w-80'} bg-white shadow-xl transition-all duration-300 ease-in-out flex flex-col`}>
-        
+      <div
+        className={`${
+          isCollapsed ? "w-20" : "w-80"
+        } bg-white shadow-xl transition-all duration-300 ease-in-out flex flex-col`}
+      >
         {/* Header */}
 
         {/* Profile Section */}
@@ -65,16 +93,24 @@ const Sidebar = () => {
                 className="w-12 h-12 rounded-full object-cover border-2 border-gray-200"
               />
               <button
-              onClick={() => setIsCollapsed(!isCollapsed)}
-              className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            >
-              {isCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-            </button>
+                onClick={() => setIsCollapsed(!isCollapsed)}
+                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              >
+                {isCollapsed ? (
+                  <ChevronRight size={20} />
+                ) : (
+                  <ChevronLeft size={20} />
+                )}
+              </button>
             </div>
             {!isCollapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">John Doe</p>
-                <p className="text-xs text-gray-500 truncate">john.doe@company.com</p>
+                <p className="text-sm font-semibold text-gray-900 truncate">
+                  John Doe
+                </p>
+                <p className="text-xs text-gray-500 truncate">
+                  john.doe@company.com
+                </p>
                 <div className="flex items-center mt-1">
                   <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
                   <span className="text-xs text-green-600">Online</span>
@@ -84,44 +120,53 @@ const Sidebar = () => {
           </div>
         </div>
 
-
         {/* Navigation */}
         <nav className="flex-1 px-4 py-2">
           <ul className="space-y-1">
             {menuItemsState.map((item, index) => {
               const Icon = item.icon;
               return (
-                <li key={item.index} id={item.index.toString()} onClick={handleClick}>
-                   <Link href={item.link || '#'}>
-                  <div
-                    className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 group ${
-                      item.active
-                        ? 'bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                    }`}
-                  >
-                    <Icon 
-                      size={20} 
-                      className={`${isCollapsed ? 'mx-auto' : 'mr-3'} ${
-                        item.active ? 'text-white' : 'text-gray-400 group-hover:text-gray-600'
-                      }`} 
-                    />
-                    {!isCollapsed && (
-                      <>
-                        <span className="font-medium flex-1">{item.label}</span>
-                        {item.badge && (
-                          <span className={`px-2 py-1 text-xs rounded-full ${
-                            item.active 
-                              ? 'bg-white bg-opacity-20 text-white' 
-                              : 'bg-blue-100 text-blue-600'
-                          }`}>
-                            {item.badge}
+                <li
+                  key={item.index}
+                  id={item.index.toString()}
+                  onClick={handleClick}
+                >
+                  <Link href={item.link || "#"}>
+                    <div
+                      className={`flex items-center px-3 py-3 rounded-lg transition-all duration-200 group ${
+                        item.active
+                          ? "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-md"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                      }`}
+                    >
+                      <Icon
+                        size={20}
+                        className={`${isCollapsed ? "mx-auto" : "mr-3"} ${
+                          item.active
+                            ? "text-white"
+                            : "text-gray-400 group-hover:text-gray-600"
+                        }`}
+                      />
+                      {!isCollapsed && (
+                        <>
+                          <span className="font-medium flex-1">
+                            {item.label}
                           </span>
-                        )}
-                      </>
-                    )}
-                  </div>
-                  </Link> 
+                          {item.badge && (
+                            <span
+                              className={`px-2 py-1 text-xs rounded-full ${
+                                item.active
+                                  ? "bg-white bg-opacity-20 text-white"
+                                  : "bg-blue-100 text-blue-600"
+                              }`}
+                            >
+                              {item.badge}
+                            </span>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </Link>
                 </li>
               );
             })}
@@ -131,20 +176,29 @@ const Sidebar = () => {
         {/* User Actions */}
         <div className="p-4 border-t border-gray-100">
           <div className="space-y-2">
-            <a
-              href="#"
-              className="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
-            >
-              <User size={20} className={`${isCollapsed ? 'mx-auto' : 'mr-3'} text-gray-400`} />
-              {!isCollapsed && <span className="font-medium">Profile</span>}
-            </a>
-            <a
-              href="#"
-              className="flex items-center px-3 py-2 text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors"
-            >
-              <LogOut size={20} className={`${isCollapsed ? 'mx-auto' : 'mr-3'}`} />
-              {!isCollapsed && <span className="font-medium">Sign Out</span>}
-            </a>
+            <Link href="/account/profile">
+              <li
+                onClick={handleOtherSection}
+                className="flex items-center px-3 py-2 text-gray-600 rounded-lg hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              >
+                <User
+                  size={20}
+                  className={`${
+                    isCollapsed ? "mx-auto" : "mr-3"
+                  } text-gray-400`}
+                />
+                {!isCollapsed && <span className="font-medium">Profile</span>}
+              </li>
+            </Link>
+            <Link href="#">
+              <li className="flex items-center px-3 py-2 text-red-600 rounded-lg hover:bg-red-50 hover:text-red-700 transition-colors">
+                <LogOut
+                  size={20}
+                  className={`${isCollapsed ? "mx-auto" : "mr-3"}`}
+                />
+                {!isCollapsed && <span className="font-medium">Sign Out</span>}
+              </li>
+            </Link>
           </div>
         </div>
       </div>
