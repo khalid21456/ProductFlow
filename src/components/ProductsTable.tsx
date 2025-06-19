@@ -137,7 +137,7 @@ export default function ProductsTable({
                                             <button
                                                 onClick={() => handleQuantityChange(product._id, currentQuantity - 1)}
                                                 disabled={currentQuantity <= 0}
-                                                className="p-1 text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="p-1  text-gray-600 hover:text-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                                 title="Decrease quantity"
                                             >
                                                 <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">

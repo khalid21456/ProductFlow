@@ -20,6 +20,15 @@ export default function ProductsPage() {
     productId: null,
     productName: "",
   });
+  const [updateModal, setUpdateModal] = useState<{
+    isOpen: boolean;
+    productId: string | null;
+    productName: string;
+  }>({
+    isOpen: false,
+    productId: null,
+    productName: "",
+  });
 
   useEffect(() => {
     fetchProducts();
@@ -65,6 +74,15 @@ export default function ProductsPage() {
       productName: product.label,
     });
   };
+
+  const handleUpdateClick = (product: Product) => {
+    setUpdateModal({
+      isOpen: true,
+      productId: product._id,
+      productName: product.label,
+    });
+  };
+
 
   const handleDeleteConfirm = async () => {
     if (!deleteModal.productId) return;
@@ -191,7 +209,7 @@ export default function ProductsPage() {
               </div>
               <button
                 onClick={handleSearch}
-                className="px-4 py-2 bg-purple-900 text-white rounded-lg hover:bg-purple-500 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-500 transition-colors flex items-center gap-2"
               >
                 <svg
                   className="h-5 w-5"
