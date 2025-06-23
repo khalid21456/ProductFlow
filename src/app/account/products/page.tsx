@@ -5,6 +5,7 @@ import { Product } from "@/types/product";
 import DeleteConfirmationModal from "@/components/DeleteConfirmationModal";
 import ProductsTable from "@/components/ProductsTable";
 import AddProductForm from "@/components/AddProductForm";
+import UpdateModal from "@/components/UpdateModal";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -167,6 +168,20 @@ export default function ProductsPage() {
         }
         onConfirm={handleDeleteConfirm}
         productName={deleteModal.productName}
+      />
+
+      <UpdateModal
+        isOpen={updateModal.isOpen}
+        onClose={() =>
+          setUpdateModal({ isOpen: false, productId: null, productName: "" })
+        }
+        onConfirm={() => {
+          if (updateModal.productId) {
+            handleUpdate(updateModal.productId);
+            setUpdateModal({ isOpen: false, productId: null, productName: "" });
+          }
+        }}
+        productName={updateModal.productName}
       />
 
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-8">

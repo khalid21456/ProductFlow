@@ -16,7 +16,7 @@ export default function ProductsLayout({
     <>
       {/* <div className="h-20 bg-green-500 shadow-amber-200"></div>
             <div>{children}</div> */}
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-hidden">
+      <div className="min-h-screen  text-black overflow-hidden">
     
         <div>{children}</div>
       </div>
